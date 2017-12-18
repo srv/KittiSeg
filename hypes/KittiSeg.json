@@ -9,12 +9,12 @@
   "path": ["../incl"],
 
   "data": {
-    "train_file" : "data_road/train3.txt",
-    "val_file" : "data_road/val3.txt",
+    "train_file" : "data_algas/train3.txt",
+    "val_file" : "data_algas/val3.txt",
     "road_color" : [255,0,255],
     "background_color" : [255,0,0],
     "vgg_url": "ftp://mi.eng.cam.ac.uk/pub/mttt2/models/vgg16.npy",
-    "kitti_url": ""
+    "kitti_url": "http://www.cvlibs.net/download.php?file=data_road.zip"
   },
  
   "arch": {
@@ -35,21 +35,21 @@
     "random_crop": true,
     "max_crop": 32,
     "crop_patch": false,
-    "patch_height": 256,
-    "patch_width": 256,
+    "patch_height": 128,
+    "patch_width": 128,
     "crop_chance": 0.8,
     "fix_shape": false,
     "reseize_image": false,
-    "image_height" : 384,
-    "image_width" : 1248,
+    "image_height" : 360,
+    "image_width" : 480,
 
     "augment_level": 0
   },
 
   "logging": {
     "display_iter": 20,
-    "eval_iter": 100,
-    "write_iter": 100,
+    "eval_iter": 500,
+    "write_iter": 500,
     "save_iter": 2000,
     "image_iter": 20000
   },
@@ -62,7 +62,7 @@
       "threads": 4,
       "learning_rate": 1e-5,
       "learning_rate_step": null,
-      "max_steps": 12000
+      "max_steps": 6500
   },
   "use_fc_wd": true,
   "loss": "xentropy",

@@ -28,15 +28,12 @@ import tensorvision.utils as utils
 
 from evaluation import kitti_test
 
-flags.DEFINE_string('RUN', 'KittiSeg_pretrained',
-                    'Modifier for model parameters.')
-flags.DEFINE_string('hypes', 'hypes/KittiSeg.json',
-                    'File storing model parameters.')
-flags.DEFINE_string('name', None,
-                    'Append a name Tag to run.')
+flags.DEFINE_string('RUN', 'KittiSeg_pretrained', 'Modifier for model parameters.')
+flags.DEFINE_string('hypes', 'hypes/KittiSeg.json', 'File storing model parameters.')
+flags.DEFINE_string('data_file', '', 'File storing test images location.')
 
-flags.DEFINE_string('project', None,
-                    'Append a name Tag to run.')
+flags.DEFINE_string('name', None, 'Append a name Tag to run.')
+flags.DEFINE_string('project', None, 'Append a name Tag to run.')
 
 if 'TV_SAVE' in os.environ and os.environ['TV_SAVE']:
     tf.app.flags.DEFINE_boolean(
@@ -110,7 +107,8 @@ def main(_):
     ana.do_analyze(logdir)
 
     logging.info("Creating output on test data.")
-    kitti_test.do_inference(logdir)
+
+    kitti_test.do_inference(logdir, FLAGS.data_file)
 
     logging.info("Analysis for pretrained model complete.")
     logging.info("For evaluating your own models I recommend using:"

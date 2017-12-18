@@ -41,12 +41,13 @@ else:
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 
-test_file = 'data_road/testing.txt'
+# test_file = 'data_road/testing.txt'
 
 
-def create_test_output(hypes, sess, image_pl, softmax):
-    data_dir = hypes['dirs']['data_dir']
-    data_file = os.path.join(data_dir, test_file)
+def create_test_output(hypes, sess, image_pl, softmax, data_file):
+    # data_dir = hypes['dirs']['data_dir']
+    # data_file = os.path.join(data_dir, test_file)
+
     image_dir = os.path.dirname(data_file)
 
     logdir = "test_images/"
@@ -88,13 +89,18 @@ def create_test_output(hypes, sess, image_pl, softmax):
                 green_image = utils.fast_overlay(image, hard)
 
                 name = os.path.basename(image_file)
-                new_name = name.split('_')[0] + "_road_" + name.split('_')[1]
+                body, ext = name.split(".")
 
+                new_name = body + "_grey." + ext
                 save_file = os.path.join(logdir, new_name)
                 logging.info("Writing file: %s", save_file)
                 scp.misc.imsave(save_file, output_im)
+
+                new_name = body + "_rb." + ext
                 save_file = os.path.join(logdir_rb, new_name)
                 scp.misc.imsave(save_file, ov_image)
+
+                new_name = body + "_green." + ext
                 save_file = os.path.join(logdir_green, new_name)
                 scp.misc.imsave(save_file, green_image)
 
@@ -105,7 +111,7 @@ def _create_input_placeholder():
     return image_pl, label_pl
 
 
-def do_inference(logdir):
+def do_inference(logdir, data_file):
     """
     Analyze a trained model.
 
@@ -136,7 +142,7 @@ def do_inference(logdir):
 
         core.load_weights(logdir, sess, saver)
 
-        create_test_output(hypes, sess, image_pl, softmax)
+        create_test_output(hypes, sess, image_pl, softmax, data_file)
     return
 
 

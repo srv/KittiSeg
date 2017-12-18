@@ -8,8 +8,7 @@ Utilizes: Trained KittiSeg weights. If no logdir is given,
 pretrained weights will be downloaded and used.
 
 Usage:
-python demo.py --input_image data/demo.png [--output_image output_image]
-                [--logdir /path/to/weights] [--gpus 0]
+python demo.py --input_image data/demo/demo.png [--output_image output_image] [--logdir /path/to/weights] [--gpus 0]
 
 --------------------------------------------------------------------------------
 
