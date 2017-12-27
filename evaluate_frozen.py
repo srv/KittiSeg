@@ -5,8 +5,15 @@ import scipy as scp
 import tensorflow as tf
 import numpy as np
 
-MODEL_NAME = 'KittiSeg_2017_12_13_13.03'
-data_file = "DATA/data_algas/testing.txt"
+
+flags = tf.app.flags
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string('RUN', '', 'Modifier for model parameters.')
+flags.DEFINE_string('data_file', '', 'Modifier for model parameters.')
+
+MODEL_NAME = FLAGS.RUN
+data_file = FLAGS.data_file
 
 image_dir = os.path.dirname(data_file)
 PATH_TO_FROZEN = 'RUNS/' + MODEL_NAME + '/frozen_model.pb'

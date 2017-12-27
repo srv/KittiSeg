@@ -2,13 +2,6 @@ import os, argparse
 
 import tensorflow as tf
 
-# The original freeze_graph function
-# from tensorflow.python.tools.freeze_graph import freeze_graph 
-
-dir = os.path.dirname(os.path.realpath(__file__))
-
-
-
 
 """Extract the sub graph defined by the output nodes and convert
 all its variables into constant
@@ -19,8 +12,13 @@ Args:
                         comma separated
 """
 
+flags = tf.app.flags
+FLAGS = flags.FLAGS
 
-model_dir = "RUNS/KittiSeg_2017_12_13_13.03"
+flags.DEFINE_string('RUN', '', 'Modifier for model parameters.')
+
+
+model_dir = "RUNS/" + FLAGS.RUN
 output_node_names = "upscore32/conv2d_transpose"
 
 # We retrieve our checkpoint fullpath
