@@ -48,8 +48,8 @@
 
   "logging": {
     "display_iter": 20,
-    "eval_iter": 500,
-    "write_iter": 500,
+    "eval_iter": 1000,
+    "write_iter": 100,
     "save_iter": 2000,
     "image_iter": 20000
   },
@@ -62,7 +62,7 @@
       "threads": 4,
       "learning_rate": 1e-5,
       "learning_rate_step": null,
-      "max_steps": 6500
+      "max_steps": 8000
   },
   "use_fc_wd": true,
   "loss": "xentropy",

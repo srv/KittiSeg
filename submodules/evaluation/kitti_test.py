@@ -41,21 +41,36 @@ else:
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 
+# test_file = 'data_road/testing.txt'
 
 
 def create_test_output(hypes, sess, image_pl, softmax, data_file):
+    # data_dir = hypes['dirs']['data_dir']
+    # data_file = os.path.join(data_dir, test_file)
 
     image_dir = os.path.dirname(data_file)
 
-    logdir = "test_images_grey/"
+    logdir = "test_images/"
+    logdir_rb = "test_images_rb/"
+    logdir_green = "test_images_green/"
 
-
-    logging.info("Images will be written to" + logdir)
+    logging.info("Images will be written to {}/test_images_{{green, rg}}"
+                 .format(logdir))
 
     logdir = os.path.join(hypes['dirs']['output_dir'], logdir)
+    logdir_rb = os.path.join(hypes['dirs']['output_dir'], logdir_rb)
+    logdir_green = os.path.join(hypes['dirs']['output_dir'], logdir_green)
 
     if not os.path.exists(logdir):
         os.mkdir(logdir)
+
+    if not os.path.exists(logdir_rb):
+        os.mkdir(logdir_rb)
+
+    if not os.path.exists(logdir_green):
+        os.mkdir(logdir_green)
+
+    image_list = []
 
     with open(data_file) as file:
         for i, image_file in enumerate(file):
@@ -66,8 +81,12 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
 
                 feed_dict = {image_pl: image}
 
-                output = sess.run([softmax['softmax']], feed_dict=feed_dict)
+                output = sess.run([softmax['softmax']], feed_dict=feed_dict)    # !!!!
                 output_im = output[0][:, 1].reshape(shape[0], shape[1])
+
+                ov_image = seg.make_overlay(image, output_im)
+                hard = output_im > 0.5
+                green_image = utils.fast_overlay(image, hard)
 
                 name = os.path.basename(image_file)
                 body, ext = name.split(".")
@@ -77,6 +96,13 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
                 logging.info("Writing file: %s", save_file)
                 scp.misc.imsave(save_file, output_im)
 
+                new_name = body + "_rb." + ext
+                save_file = os.path.join(logdir_rb, new_name)
+                scp.misc.imsave(save_file, ov_image)
+
+                new_name = body + "_green." + ext
+                save_file = os.path.join(logdir_green, new_name)
+                scp.misc.imsave(save_file, green_image)
 
 
 def _create_input_placeholder():
