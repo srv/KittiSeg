@@ -1,29 +1,25 @@
+Models/*
+
+.idea/
+
+#test output
+tensorvision/tests/*.png
+
+# Model Stuff
+examples/RUNS
+examples/DATA
+.nfs*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.npy
-
-sftp-config.json
-
-run*.sh
-demo*.sh
-.nfs*
-
-network/DATA/*
-network/RUNS/*
-network/output/*
-
-hypes/*_*_*.json
-
-.directory
 
 # C extensions
 *.so
 
 # Distribution / packaging
-.Pythot
-qqn
+.Python
 env/
 build/
 develop-eggs/
@@ -76,3 +72,9 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+DATA
+output
+
+# Sublime stuff
+*.sublime-project
+*.sublime-workspace
