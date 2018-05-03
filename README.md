@@ -21,4 +21,4 @@ If you benefit from this code or dataset, please cite our paper:
   year={2018}
 }
 ```
-\* If you use the network code, cite the source paper from the forked Github
+\* If you use the network code, cite the source paper from the forked GitHub
