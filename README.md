@@ -1,6 +1,6 @@
 # Posidonia-semantic-segmentation
 
-A Posidonia oceanica Segmentation model implemented in tensorflow.
+A Posidonia oceanica Semantic Segmentation model implemented in tensorflow.
 
 Folder organization:
 
