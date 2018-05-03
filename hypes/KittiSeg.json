@@ -9,8 +9,8 @@
   "path": ["../incl"],
 
   "data": {
-    "train_file" : "data_algas/train3.txt",
-    "val_file" : "data_algas/val3.txt",
+    "train_file" : "norm_mix/train3.txt",
+    "val_file" : "norm_mix/val3.txt",
     "road_color" : [255,0,0],
     "background_color" : [255,0,255],
     "vgg_url": "ftp://mi.eng.cam.ac.uk/pub/mttt2/models/vgg16.npy",
@@ -48,9 +48,9 @@
 
   "logging": {
     "display_iter": 20,
-    "eval_iter": 1000,
+    "eval_iter": 11000,
     "write_iter": 100,
-    "save_iter": 2000,
+    "save_iter": 11000,
     "image_iter": 20000
   },
 
@@ -60,9 +60,9 @@
       "epsilon": 0.000000001,
       "adam_eps": 0.00001,
       "threads": 4,
-      "learning_rate": 1e-5,
+      "learning_rate": 1e-05,
       "learning_rate_step": null,
-      "max_steps": 8000
+      "max_steps": 16000
   },
   "use_fc_wd": true,
   "loss": "xentropy",

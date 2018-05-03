@@ -24,6 +24,7 @@ import tensorflow as tf
 
 import tensorvision.utils as utils
 import tensorvision.core as core
+import time as time
 
 
 from seg_utils import seg_utils as seg
@@ -50,7 +51,7 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
 
     image_dir = os.path.dirname(data_file)
 
-    logdir = "test_images/"
+    logdir = "test_images_grey/"
     logdir_rb = "test_images_rb/"
     logdir_green = "test_images_green/"
 
@@ -74,35 +75,41 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
 
     with open(data_file) as file:
         for i, image_file in enumerate(file):
-                image_file = image_file.rstrip()
-                image_file = os.path.join(image_dir, image_file)
-                image = scp.misc.imread(image_file)
-                shape = image.shape
 
-                feed_dict = {image_pl: image}
+            t = time.time()
 
-                output = sess.run([softmax['softmax']], feed_dict=feed_dict)    # !!!!
-                output_im = output[0][:, 1].reshape(shape[0], shape[1])
+            image_file = image_file.rstrip()
+            image_file = os.path.join(image_dir, image_file)
+            image = scp.misc.imread(image_file)
+            shape = image.shape
 
-                ov_image = seg.make_overlay(image, output_im)
-                hard = output_im > 0.5
-                green_image = utils.fast_overlay(image, hard)
+            feed_dict = {image_pl: image}
 
-                name = os.path.basename(image_file)
-                body, ext = name.split(".")
+            output = sess.run([softmax['softmax']], feed_dict=feed_dict)    # !!!!
+            output_im = output[0][:, 1].reshape(shape[0], shape[1])
 
-                new_name = body + "_grey." + ext
-                save_file = os.path.join(logdir, new_name)
-                logging.info("Writing file: %s", save_file)
-                scp.misc.imsave(save_file, output_im)
+            ov_image = seg.make_overlay(image, output_im)
+            hard = output_im > 0.5
+            green_image = utils.fast_overlay(image, hard)
 
-                new_name = body + "_rb." + ext
-                save_file = os.path.join(logdir_rb, new_name)
-                scp.misc.imsave(save_file, ov_image)
+            name = os.path.basename(image_file)
+            body, ext = name.split(".")
 
-                new_name = body + "_green." + ext
-                save_file = os.path.join(logdir_green, new_name)
-                scp.misc.imsave(save_file, green_image)
+            new_name = body + "_grey." + ext
+            save_file = os.path.join(logdir, new_name)
+            logging.info("Writing file: %s", save_file)
+            scp.misc.imsave(save_file, output_im)
+
+            new_name = body + "_rb." + ext
+            save_file = os.path.join(logdir_rb, new_name)
+            scp.misc.imsave(save_file, ov_image)
+
+            new_name = body + "_green." + ext
+            save_file = os.path.join(logdir_green, new_name)
+            scp.misc.imsave(save_file, green_image)
+
+            elapsed = time.time() - t
+            print("elapsed time: " + str(elapsed))
 
 
 def _create_input_placeholder():

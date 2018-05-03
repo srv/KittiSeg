@@ -6,6 +6,11 @@ import tensorflow as tf
 import numpy as np
 
 
+
+"""
+evaluate the frozen model (.pb) defining input and output tensors
+"""
+
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 
@@ -17,7 +22,7 @@ data_file = FLAGS.data_file
 
 image_dir = os.path.dirname(data_file)
 PATH_TO_FROZEN = 'RUNS/' + MODEL_NAME + '/frozen_model.pb'
-output_dir = "RUNS/" + MODEL_NAME + "/test_images/"
+output_dir = "RUNS/" + MODEL_NAME + "/test_images_freeze/"
 
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
@@ -35,7 +40,7 @@ with detection_graph.as_default():
         with tf.Session(graph=detection_graph) as sess:
 
             l_input = detection_graph.get_tensor_by_name('Inputs/fifo_queue_Dequeue:0')  # Input Tensor
-            l_output = detection_graph.get_tensor_by_name('upscore32/conv2d_transpose:0')  # Output Tensor
+            l_output = detection_graph.get_tensor_by_name('upscore32/conv2d_transpose:0')  # Output Tensor 'upscore2_1/conv2d_transpose:0' 'upscore32_1/Print:0'
 
             with open(data_file) as file:
                 for i, image_file in enumerate(file):
@@ -44,12 +49,12 @@ with detection_graph.as_default():
                     image = scp.misc.imread(image_file)
                     shape = image.shape
 
-                    output = sess.run(l_output, feed_dict={l_input: image})
+                    conv2d = sess.run(l_output, feed_dict={l_input: image})
 
-                    a = output[0]
+                    soft = tf.nn.softmax(conv2d[0])
+                    probs = sess.run(soft)
 
-                    output_im1 = a[..., 0]
-                    output_im2 = a[..., 1]
+                    prob1 = probs[..., 1]
 
                     name = os.path.basename(image_file)
                     body, ext = name.split(".")
@@ -57,9 +62,4 @@ with detection_graph.as_default():
                     new_name = body + "_bw." + ext
                     save_file = os.path.join(output_dir, new_name)
                     logging.info("Writing file: %s", save_file)
-                    scp.misc.imsave(save_file, output_im1)
-
-                    new_name = body + "_wb." + ext
-                    save_file = os.path.join(output_dir, new_name)
-                    logging.info("Writing file: %s", save_file)
-                    scp.misc.imsave(save_file, output_im2)
+                    scp.misc.imsave(save_file, prob1)

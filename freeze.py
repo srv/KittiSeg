@@ -1,15 +1,10 @@
 import os, argparse
-
 import tensorflow as tf
 
+## code from: https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc
 
-"""Extract the sub graph defined by the output nodes and convert
-all its variables into constant
-
-Args:
-    model_dir: the root folder containing the checkpoint state file
-    output_node_names: a string, containing all the output node's names,
-                        comma separated
+"""
+Extract the sub graph defined by the output nodes and convert all its variables into constant
 """
 
 flags = tf.app.flags
@@ -19,7 +14,7 @@ flags.DEFINE_string('RUN', '', 'Modifier for model parameters.')
 
 
 model_dir = "RUNS/" + FLAGS.RUN
-output_node_names = "upscore32/conv2d_transpose"
+output_node_names = "upscore32/conv2d_transpose"  # "upscore2_1/conv2d_transpose" //  upscore32_1/Print
 
 # We retrieve our checkpoint fullpath
 checkpoint = tf.train.get_checkpoint_state(model_dir)
