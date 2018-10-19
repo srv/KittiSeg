@@ -10,9 +10,14 @@ run*.sh
 demo*.sh
 .nfs*
 
-network/DATA/*
-network/RUNS/*
-network/output/*
+use.txt
+data/*
+results/*
+segnet/*
+unet/*
+vgg16fcn8/DATA/*
+vgg16fcn8/RUNS/*
+vgg16fcn8/output/*
 
 hypes/*_*_*.json
 

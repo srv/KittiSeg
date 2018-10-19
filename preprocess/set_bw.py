@@ -17,6 +17,7 @@ FLAGS = flags.FLAGS
 
 for root, dirs, files in os.walk(FLAGS.im_path_in):  # for each folder
 
+
     for file in enumerate(files):  # for each file in the folder
 
         filepath = os.path.join(root, file[1])  # file path
@@ -33,7 +34,7 @@ for root, dirs, files in os.walk(FLAGS.im_path_in):  # for each folder
             img[y[0], y[1]] = 255  # set to white
 
             y = np.where(image <= thr)  # belos threshold
-            img[y[0], y[1]] = O  # set to black
+            img[y[0], y[1]] = 0  # set to black
 
             scipy.misc.imsave(FLAGS.im_path_out + "/" + file[1], img)  # generate image file
 
