@@ -11,6 +11,7 @@ demo*.sh
 .nfs*
 
 use.txt
+uncertainty/data/*
 data/*
 results/*
 segnet/*

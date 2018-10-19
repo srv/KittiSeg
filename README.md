@@ -2,6 +2,10 @@
 
 A Posidonia oceanica Semantic Segmentation model implemented in tensorflow.
 
+
+<img src="examples/159_00003.png" width="288"> <img src="examples/159_00003_green.png" width="288">
+<img src="examples/v1_mix011.png" width="288"> <img src="examples/v1_mix011_green.png" width="288">
+
 Folder organization:
 
 * preprocess: contains scripts to preprocess the images and ground thruts, resize, change extension, change color,...
