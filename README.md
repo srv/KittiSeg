@@ -3,8 +3,8 @@
 A Posidonia oceanica Semantic Segmentation model implemented in tensorflow.
 
 
-<img src="examples/159_00003.png" width="288"> <img src="examples/159_00003_green.png" width="288">
-<img src="examples/v1_mix011.png" width="288"> <img src="examples/v1_mix011_green.png" width="288">
+<img src="vgg16fcn8/examples/159_00003.png" width="288"> <img src="vgg16fcn8/examples/159_00003_green.png" width="288">
+<img src="vgg16fcn8/examples/v1_mix011.png" width="288"> <img src="vgg16fcn8/examples/v1_mix011_green.png" width="288">
 
 Folder organization:
 
