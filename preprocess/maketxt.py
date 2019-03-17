@@ -32,7 +32,7 @@ for folder in folders:
 
             length = len(files)
 
-            nVal = math.floor(length*0.05)  # select validation files
+            nVal = int(math.floor(length*0.05)) # select validation files
             iVal = random.sample(range(0, length), nVal)
             iVal.sort()
             filesVal = [files[i] for i in iVal]

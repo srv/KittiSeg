@@ -23,7 +23,7 @@ FLAGS = flags.FLAGS
 sys.path.insert(1, 'incl')
 
 
-from evaluation import kitti_test
+from evals import kitti_test
 
 flags.DEFINE_string('RUN', 'KittiSeg_pretrained', 'Modifier for model parameters.')
 flags.DEFINE_string('data_file', '', 'File storing test images location.')

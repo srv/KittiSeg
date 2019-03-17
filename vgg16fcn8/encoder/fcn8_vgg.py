@@ -17,7 +17,7 @@ from tensorflow_fcn import fcn8_vgg
 import tensorflow as tf
 
 import os
-
+import utils.classes_utils as cutils
 
 def inference(hypes, images, train=True):
     """Build the MNIST model up to where it may be used for inference.
@@ -35,7 +35,7 @@ def inference(hypes, images, train=True):
 
     vgg_fcn.wd = hypes['wd']
 
-    vgg_fcn.build(images, train=train, num_classes=2, random_init_fc8=True)
+    vgg_fcn.build(images, train=train, num_classes=cutils.get_num_classes(hypes), random_init_fc8=True)
 
     logits = {}
 

@@ -80,5 +80,14 @@ docs/_build/
 # PyBuilder
 target/
 
+# Idea
+.idea/
+
+# venv
+venv/
+
+# DATA
+vgg16fcn8/DATA/
+
 #Ipython Notebook
 .ipynb_checkpoints

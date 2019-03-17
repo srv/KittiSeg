@@ -219,11 +219,11 @@ def loss(hypes, decoded_logits, labels):
     logits = decoded_logits['logits']
     with tf.name_scope('loss'):
 
-        logits = tf.reshape(logits, (-1, 2))
-        shape = [logits.get_shape()[0], 2]
+        logits = tf.reshape(logits, (-1, hypes['arch']['num_classes']))
+        shape = [logits.get_shape()[0], hypes['arch']['num_classes']]
         epsilon = tf.constant(value=hypes['solver']['epsilon'])
         # logits = logits + epsilon
-        labels = tf.to_float(tf.reshape(labels, (-1, 2)))
+        labels = tf.to_float(tf.reshape(labels, (-1, hypes['arch']['num_classes'])))
 
         softmax = tf.nn.softmax(logits) + epsilon
 
@@ -263,7 +263,7 @@ def _compute_cross_entropy_mean(hypes, labels, softmax):
 
 
 def _compute_f1(hypes, labels, softmax, epsilon):
-    labels = tf.to_float(tf.reshape(labels, (-1, 2)))[:, 1]
+    labels = tf.to_float(tf.reshape(labels, (-1, hypes['arch']['num_classes'])))[:, 1]
     logits = softmax[:, 1]
     true_positive = tf.reduce_sum(labels*logits)
     false_positive = tf.reduce_sum((1-labels)*logits)
@@ -304,20 +304,23 @@ def evaluation(hyp, images, labels, decoded_logits, losses, global_step):
     # the examples where the label's is was in the top k (here k=1)
     # of all logits for that example.
     eval_list = []
-    logits = tf.reshape(decoded_logits['logits'], (-1, 2))
-    labels = tf.reshape(labels, (-1, 2))
+    num_classes = hyp['arch']['num_classes']
+    logits = tf.reshape(decoded_logits['logits'], (-1, num_classes))
+    labels = tf.reshape(labels, (-1, num_classes))
+
 
     pred = tf.argmax(logits, dimension=1)
 
-    negativ = tf.to_int32(tf.equal(pred, 0))
-    tn = tf.reduce_sum(negativ*labels[:, 0])
-    fn = tf.reduce_sum(negativ*labels[:, 1])
+    tp = 0
+    all_fn = 0
+    for i in range(num_classes):
+        negativ = tf.to_int32(tf.equal(pred, i))
+        for j in range(num_classes):
+            all_fn += tf.reduce_sum(negativ * labels[:, j])
+            if i is j:
+                tp += tf.reduce_sum(negativ * labels[:, j])
 
-    positive = tf.to_int32(tf.equal(pred, 1))
-    tp = tf.reduce_sum(positive*labels[:, 1])
-    fp = tf.reduce_sum(positive*labels[:, 0])
-
-    eval_list.append(('Acc. ', (tn+tp)/(tn + fn + tp + fp)))
+    eval_list.append(('Acc. ', (tp / all_fn)))
     eval_list.append(('xentropy', losses['xentropy']))
     eval_list.append(('weight_loss', losses['weight_loss']))
 
