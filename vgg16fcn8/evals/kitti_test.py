@@ -64,7 +64,7 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
     num_classes = cutils.get_num_classes(hypes)
     color_dict = cutils.get_output_color_dict(hypes)
     total_confusion_matrix = np.zeros([num_classes, num_classes], int)
-    image_list = []
+    name_classes = cutils.get_name_classes(hypes)
 
     with open(data_file) as file:
         for i, datum in enumerate(file):
@@ -84,12 +84,9 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
 
             output = sess.run([softmax['softmax']], feed_dict=feed_dict)
             output_im = output[0].argmax(axis=1).reshape(shape[0], shape[1])
-            output_prob = output[0].max(axis=1).reshape(shape[0], shape[1])
 
             # Saving RB Plot
-            ov_image = seg.make_overlay(image, output_prob)
             name = os.path.basename(image_file)
-            image_list.append((name, ov_image))
 
             new_name = name.split('.')[0] + '_prediction.png'
 
@@ -103,6 +100,12 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
             if 'gt_image' in locals():
                 confusion_matrix = kitti_eval.eval_image(hypes, cutils.get_gt_image_index(gt_image, hypes), output_im)
                 total_confusion_matrix += confusion_matrix
+                for j in range(num_classes):
+                    gray_scale_file_name = name.split('.')[0] + '_' + name_classes[j] + '_grayscale.png'
+                    save_file = os.path.join(logdir_prediction, gray_scale_file_name)
+                    output_prob_class = np.around(output[0][:, j].reshape(shape[0], shape[1]) * 255)
+                    scp.misc.imsave(save_file, output_prob_class)
+
         if 'gt_image' in locals():
             normalized_total_confusion_matrix = total_confusion_matrix.astype('float') / total_confusion_matrix.sum(axis=1)[:, np.newaxis]
             normalized_total_confusion_matrix[np.isnan(normalized_total_confusion_matrix )] = 0
@@ -110,7 +113,6 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
                 "confusion_matrix": total_confusion_matrix,
                 "normalized_confusion_matrix": normalized_total_confusion_matrix
             }
-            name_classes = cutils.get_name_classes(hypes)
             for i in range(num_classes):
                 classes_result[name_classes[i]] = kitti_eval.obtain_class_result(total_confusion_matrix, i)
             eval_result = {"classes_result": classes_result}
