@@ -25,8 +25,7 @@ import tensorflow as tf
 import tensorvision.utils as utils
 import tensorvision.core as core
 import time as time
-
-
+from evals import kitti_eval
 from seg_utils import seg_utils as seg
 import utils.classes_utils as cutils
 
@@ -52,25 +51,31 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
 
     image_dir = os.path.dirname(data_file)
 
-    logdir_green = "test_images_green/"
+    logdir_prediction = "test_images_prediction/"
 
-    logging.info("Images will be written to {}/test_images_{{green, rg}}"
-                 .format(logdir_green))
+    logging.info("Images will be written to {}/test_images_{{prediction, rg}}"
+                 .format(logdir_prediction))
 
-    logdir_green = os.path.join(hypes['dirs']['output_dir'], logdir_green)
+    logdir_prediction = os.path.join(hypes['dirs']['output_dir'], logdir_prediction)
 
-    if not os.path.exists(logdir_green):
-        os.mkdir(logdir_green)
+    if not os.path.exists(logdir_prediction):
+        os.mkdir(logdir_prediction)
 
-    image_list = []
+    num_classes = cutils.get_num_classes(hypes)
     color_dict = cutils.get_output_color_dict(hypes)
+    total_confusion_matrix = np.zeros([num_classes, num_classes], int)
+    image_list = []
 
     with open(data_file) as file:
-        for i, image_file in enumerate(file):
+        for i, datum in enumerate(file):
 
             t = time.time()
 
-            image_file = image_file.rstrip()
+            image_file = datum.rstrip()
+            if len(image_file.split(" ")) > 1:
+                image_file, gt_file = image_file.split(" ")
+                gt_file = os.path.join(image_dir, gt_file)
+                gt_image = scp.misc.imread(gt_file, mode='RGB')
             image_file = os.path.join(image_dir, image_file)
             image = scp.misc.imread(image_file)
             shape = image.shape
@@ -86,15 +91,30 @@ def create_test_output(hypes, sess, image_pl, softmax, data_file):
             name = os.path.basename(image_file)
             image_list.append((name, ov_image))
 
-            new_name = name.split('.')[0] + '_green.png'
+            new_name = name.split('.')[0] + '_prediction.png'
 
-            green_image = utils.overlay_segmentation(image, output_im, color_dict)
+            prediction_image = utils.overlay_segmentation(image, output_im, color_dict)
 
-            save_file = os.path.join(logdir_green, new_name)
-            scp.misc.imsave(save_file, green_image)
+            save_file = os.path.join(logdir_prediction, new_name)
+            scp.misc.imsave(save_file, prediction_image)
 
             elapsed = time.time() - t
             print("elapsed time: " + str(elapsed))
+            if 'gt_image' in locals():
+                confusion_matrix = kitti_eval.eval_image(hypes, cutils.get_gt_image_index(gt_image, hypes), output_im)
+                total_confusion_matrix += confusion_matrix
+        if 'gt_image' in locals():
+            normalized_total_confusion_matrix = total_confusion_matrix.astype('float') / total_confusion_matrix.sum(axis=1)[:, np.newaxis]
+            normalized_total_confusion_matrix[np.isnan(normalized_total_confusion_matrix )] = 0
+            classes_result = {
+                "confusion_matrix": total_confusion_matrix,
+                "normalized_confusion_matrix": normalized_total_confusion_matrix
+            }
+            name_classes = cutils.get_name_classes(hypes)
+            for i in range(num_classes):
+                classes_result[name_classes[i]] = kitti_eval.obtain_class_result(total_confusion_matrix, i)
+            eval_result = {"classes_result": classes_result}
+            print(eval_result)
 
 
 def _create_input_placeholder():
@@ -132,8 +152,8 @@ def do_inference(logdir, data_file):
         saver = tf.train.Saver()
 
         core.load_weights(logdir, sess, saver)
-
         create_test_output(hypes, sess, image_pl, softmax, data_file)
+
     return
 
 
