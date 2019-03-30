@@ -19,11 +19,17 @@ Folder organization:
 If you benefit from this code or dataset, please cite our paper:
 
 ```
-@article{Miguel2018,
-  title={Deep Semantic Segmentation for Posidonia Oceanica Meadows Identification},
-  author={Miguel Martin-Abadal and Eric Guerrero-Font and Francisco Bonin-Font and Yolanda Gonzalez-Cid},
-  journal={arXiv preprint arXiv:xxxx.xxxxx},
-  year={2018}
-}
+@article{Miguel2018ART, 
+author={M. Martin-Abadal and E. Guerrero-Font and F. Bonin-Font and Y. Gonzalez-Cid}, 
+journal={IEEE Access}, 
+title={Deep Semantic Segmentation in an AUV for Online Posidonia Oceanica Meadows Identification}, 
+year={2018}, 
+volume={6}, 
+number={}, 
+pages={60956-60967}, 
+keywords={Semantics;Training;Image segmentation;Neural networks;Computer architecture;Decoding;Cameras;Deep learning;online semantic segmentation;Posidonia oceanica;autonomous underwater vehicle}, 
+doi={10.1109/ACCESS.2018.2875412}, 
+ISSN={2169-3536}, 
+month={},}
 ```
 \* If you use the network code, cite the source paper from the forked GitHub
