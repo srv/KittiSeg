@@ -13,18 +13,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-import numpy as np
-import scipy as scp
-import random
-from seg_utils import seg_utils as seg
-
-
 import tensorflow as tf
-
+from utils import decoder_utils as dutils
+from utils import classes_utils as cutils
 
 def _add_softmax(hypes, logits):
-    num_classes = hypes['arch']['num_classes']
+    num_classes = cutils.get_num_classes(hypes)
     with tf.name_scope('decoder'):
         logits = tf.reshape(logits, (-1, num_classes))
         epsilon = tf.constant(value=hypes['solver']['epsilon'])
@@ -62,11 +56,12 @@ def loss(hypes, decoded_logits, labels):
     """
     logits = decoded_logits['logits']
     with tf.name_scope('loss'):
-        logits = tf.reshape(logits, (-1, 2))
-        shape = [logits.get_shape()[0], 2]
+        num_classes = cutils.get_num_classes(hypes)
+        logits = tf.reshape(logits, (-1, num_classes))
+        shape = [logits.get_shape()[0], num_classes]
         epsilon = tf.constant(value=hypes['solver']['epsilon'])
         # logits = logits + epsilon
-        labels = tf.to_float(tf.reshape(labels, (-1, 2)))
+        labels = tf.to_float(tf.reshape(labels, (-1, num_classes)))
 
         softmax = tf.nn.softmax(logits) + epsilon
 
@@ -106,7 +101,7 @@ def _compute_cross_entropy_mean(hypes, labels, softmax):
 
 
 def _compute_f1(hypes, labels, softmax, epsilon):
-    labels = tf.to_float(tf.reshape(labels, (-1, 2)))[:, 1]
+    labels = tf.to_float(tf.reshape(labels, (-1, cutils.get_num_classes(hypes))))[:, 1]
     logits = softmax[:, 1]
     true_positive = tf.reduce_sum(labels*logits)
     false_positive = tf.reduce_sum((1-labels)*logits)
@@ -131,41 +126,4 @@ def _compute_soft_ui(hypes, labels, softmax, epsilon):
 
 
 def evaluation(hyp, images, labels, decoded_logits, losses, global_step):
-    """Evaluate the quality of the logits at predicting the label.
-
-    Args:
-      logits: Logits tensor, float - [batch_size, NUM_CLASSES].
-      labels: Labels tensor, int32 - [batch_size], with values in the
-        range [0, NUM_CLASSES).
-
-    Returns:
-      A scalar int32 tensor with the number of examples (out of batch_size)
-      that were predicted correctly.
-    """
-    # For a classifier model, we can use the in_top_k Op.
-    # It returns a bool tensor with shape [batch_size] that is true for
-    # the examples where the label's is was in the top k (here k=1)
-    # of all logits for that example.
-    eval_list = []
-    logits = tf.reshape(decoded_logits['logits'], (-1, 2))
-    labels = tf.reshape(labels, (-1, 2))
-
-    pred = tf.argmax(logits, dimension=1)
-
-    negativ = tf.to_int32(tf.equal(pred, 0))
-    tn = tf.reduce_sum(negativ*labels[:, 0])
-    fn = tf.reduce_sum(negativ*labels[:, 1])
-
-    positive = tf.to_int32(tf.equal(pred, 1))
-    tp = tf.reduce_sum(positive*labels[:, 1])
-    fp = tf.reduce_sum(positive*labels[:, 0])
-
-    eval_list.append(('Acc. ', (tn+tp)/(tn + fn + tp + fp)))
-    eval_list.append(('xentropy', losses['xentropy']))
-    eval_list.append(('weight_loss', losses['weight_loss']))
-
-    # eval_list.append(('Precision', tp/(tp + fp)))
-    # eval_list.append(('True BG', tn/(tn + fp)))
-    # eval_list.append(('True Street [Recall]', tp/(tp + fn)))
-
-    return eval_list
+    return dutils.evaluation_original(hyp, images, labels, decoded_logits, losses, global_step)

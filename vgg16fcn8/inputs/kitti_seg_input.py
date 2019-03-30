@@ -33,7 +33,7 @@ from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.framework import dtypes
 
 import threading
-
+import utils.classes_utils as cutils
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
                     level=logging.INFO,
@@ -147,22 +147,18 @@ def _make_data_gen(hypes, phase, data_dir):
 
     data_file = os.path.join(data_dir, data_file)
 
-    road_color = np.array(hypes['data']['road_color'])
-    background_color = np.array(hypes['data']['background_color'])
+    color_classes = cutils.get_color_classes(hypes)
 
     data = _load_gt_file(hypes, data_file)
 
     for image, gt_image in data:
+        gt_color_classes = [np.any([np.all(gt_image == i, axis=2) for i in colors], axis=0) for colors in color_classes]
 
-        gt_bg = np.all(gt_image == background_color, axis=2)
-        gt_road = np.all(gt_image == road_color, axis=2)
+        assert(gt_color_classes[0].shape == gt_color_classes[0].shape)
+        shape = gt_color_classes[0].shape
 
-        assert(gt_road.shape == gt_bg.shape)
-        shape = gt_bg.shape
-        gt_bg = gt_bg.reshape(shape[0], shape[1], 1)
-        gt_road = gt_road.reshape(shape[0], shape[1], 1)
-
-        gt_image = np.concatenate((gt_bg, gt_road), axis=2)
+        gt_color_classes = [i.reshape(shape[0], shape[1], 1) for i in gt_color_classes]
+        gt_image = np.concatenate(gt_color_classes, axis=2)
 
         if phase == 'val':
             yield image, gt_image
@@ -320,7 +316,7 @@ def create_queues(hypes, phase):
             height = hypes['jitter']['image_height']
             width = hypes['jitter']['image_width']
         channel = hypes['arch']['num_channels']
-        num_classes = hypes['arch']['num_classes']
+        num_classes = cutils.get_num_classes(hypes)
         shapes = [[height, width, channel],
                   [height, width, num_classes]]
     else:
@@ -461,8 +457,8 @@ def inputs(hypes, q, phase):
 
     if not shape_known:
         image, label = q.dequeue()
-        nc = hypes["arch"]["num_classes"]
-        label.set_shape([None, None, nc])
+        num_classes = cutils.get_num_classes(hypes)
+        label.set_shape([None, None, num_classes])
         image.set_shape([None, None, 3])
         image = tf.expand_dims(image, 0)
         label = tf.expand_dims(label, 0)
