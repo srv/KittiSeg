@@ -1,4 +1,4 @@
-# Posidonia-semantic-segmentation- multiclass
+# Posidonia-semantic-segmentation-multiclass
 
 A Posidonia oceanica Semantic Segmentation model implemented in tensorflow.
 
