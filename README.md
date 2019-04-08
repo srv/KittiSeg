@@ -21,17 +21,17 @@ https://ieeexplore.ieee.org/document/8489861
 If you benefit from this code or dataset, please cite our paper:
 
 ```
-@article{Miguel2018ART, 
-author={M. Martin-Abadal and E. Guerrero-Font and F. Bonin-Font and Y. Gonzalez-Cid}, 
+@article{Martin2018, 
+author={M. {Martin-Abadal} and E. {Guerrero-Font} and F. {Bonin-Font} and Y. {Gonzalez-Cid}}, 
 journal={IEEE Access}, 
 title={Deep Semantic Segmentation in an AUV for Online Posidonia Oceanica Meadows Identification}, 
 year={2018}, 
 volume={6}, 
 number={}, 
 pages={60956-60967}, 
-keywords={Semantics;Training;Image segmentation;Neural networks;Computer architecture;Decoding;Cameras;Deep learning;online semantic segmentation;Posidonia oceanica;autonomous underwater vehicle}, 
+keywords={autonomous underwater vehicles;image segmentation;neural nets;oceanographic techniques;seafloor phenomena;underwater equipment;diverse test sets;real-time semantic coverage maps;deep semantic segmentation;AUV;online Posidonia oceanica meadows identification;fundamental tools;deep neural network;highprecision semantic segmentation;sea-floor images;Semantics;Training;Image segmentation;Neural networks;Computer architecture;Decoding;Cameras;Deep learning;online semantic segmentation;Posidonia oceanica;autonomous underwater vehicle}, 
 doi={10.1109/ACCESS.2018.2875412}, 
 ISSN={2169-3536}, 
-month={},}
+month={October},}
 ```
 \* If you use the network code, cite the source paper from the forked GitHub
