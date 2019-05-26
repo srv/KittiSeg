@@ -10,19 +10,35 @@
   "path": ["../incl"],
 
   "data": {
-    "train_file" : "halimeda/train3.txt",
-    "val_file" : "halimeda/val3.txt",
-    "road_color" : [255,0,0],
-    "background_color" : [255,0,255],
+    "train_file" : "multi/train3.txt",
+    "val_file" : "multi/val3.txt",
     "vgg_url": "ftp://mi.eng.cam.ac.uk/pub/mttt2/models/vgg16.npy",
     "kitti_url": "http://www.cvlibs.net/download.php?file=data_road.zip"
   },
- 
+
+  "classes": [
+    {"name": "background",
+     "colors": [[0,0,0]],
+     "output": [0,0,0,0]},
+    {"name": "rock",
+     "colors": [[255,0,0], [128,0,0], [0,255,255]],
+     "output": [255,0,0,127]},
+    {"name": "posidoniaviva",
+     "colors": [[0,255,0]],
+     "output": [0,255,0,127]},
+    {"name": "posidoniamerta",
+     "colors": [[0,0,255]],
+     "output": [0,0,255,127]},
+    {"name": "sand",
+     "colors": [[255,255,0],[255,0,255],[128,128,0]],
+     "output": [255,255,0,127]}
+ ],
+
   "arch": {
     "fcn_in": "fc7",
-    "num_classes" : 2,
+    "num_classes" : 5,
     "image_size" : 50,
-    "weight": [1, 1],
+    "weight": [1,1,1,1,1],
     "num_channels" : 3,
     "whitening": false
   },
