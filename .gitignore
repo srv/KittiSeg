@@ -86,11 +86,6 @@ target/
 # venv
 venv/
 
-#submodules
-vgg16fcn8/submodeules/evaluation/
-vgg16fcn8/submodeules/tensorflow-fcn/
-vgg16fcn8/submodeules/Tensorvision/
-
 # DATA
 vgg16fcn8/DATA/
 
