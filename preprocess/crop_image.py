@@ -1,21 +1,35 @@
-import tensorflow as tf
 from scipy import ndimage
 import scipy
 import os
 import re
+import sys
+import argparse
 
 """
 crop an image
 """
 
-flags = tf.app.flags
-flags.DEFINE_string('im_path_in', '', 'Directory where the input images are stored.')
-flags.DEFINE_string('im_path_out', '', 'Directory where the output images will be stored.')
-flags.DEFINE_string('read_mode', 'RGB', 'mode used to read images')
 
-FLAGS = flags.FLAGS
+parser = argparse.ArgumentParser()
+parser.add_argument('--path_in', help ='Directory where the input images are stored.')
+parser.add_argument('--path_out', help ='Directory where the output images will be stored.')
+parser.add_argument('--read_mode', default='RGB', help ='mode used to read images')
+parser.add_argument('--l', default='0', help ='desired left crop.')
+parser.add_argument('--r', default='0', help ='desired right crop.')
+parser.add_argument('--t', default='0', help ='desired top crop.')
+parser.add_argument('--b', default='0', help ='desired bottom crop.')
+parsed_args = parser.parse_args(sys.argv[1:])
 
-for root, dirs, files in os.walk(FLAGS.im_path_in):  # for each folder
+path_in = parsed_args.path_in
+path_out = parsed_args.path_out
+read_mode = parsed_args.read_mode
+l = int(parsed_args.l)
+r = int(parsed_args.r)
+t = int(parsed_args.t)
+b = int(parsed_args.b)
+
+
+for root, dirs, files in os.walk(path_in):  # for each folder
 
     for file in enumerate(files):  # for each file in the folder
 
@@ -23,8 +37,8 @@ for root, dirs, files in os.walk(FLAGS.im_path_in):  # for each folder
 
         if re.search("\.(png|jpg|jpeg)$", file[1]):  # if the file is an image
 
-            image = ndimage.imread(filepath, mode=FLAGS.read_mode)  # read image
+            name,ext = os.path.splitext(file[1])
+            image = ndimage.imread(filepath, mode=read_mode)  # read image
+            image_crop = image[t:-b, l:-r]   # crop
 
-            image_crop = image[1:-25, 1:-25]   # crop
-
-            scipy.misc.imsave(FLAGS.im_path_out + "/crop_" + file[1], image_crop)  # generate image file
+            scipy.misc.imsave(path_out + "/" + name + '_crop' + ext , image_crop)  # generate image file
